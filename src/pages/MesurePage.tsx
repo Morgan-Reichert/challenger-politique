@@ -1,9 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ExternalLink, LogIn, Scale, HelpCircle, Landmark, AlertTriangle, BookMarked, Coins } from 'lucide-react';
+import { ExternalLink, Scale, HelpCircle, Landmark, AlertTriangle, BookMarked, Coins } from 'lucide-react';
 import { mesure, chiffrages } from '../lib/corpus';
-import { analyser, analyserFaisabilite, budgetTheme, poserQuestion, ErreurApi, type Faisabilite, type Unite } from '../lib/api';
-import { useSession } from '../lib/auth';
+import { analyser, analyserFaisabilite, budgetTheme, poserQuestion, type Faisabilite, type Unite } from '../lib/api';
 import { nomTheme } from '../lib/themes';
 import { useCharge } from '../lib/useCharge';
 import type { Analyse, Controles, SourceReponse } from '../lib/types';
@@ -47,15 +46,13 @@ const NIVEAUX_OBSTACLE: Record<string, string> = {
 
 export default function MesurePage() {
   const { id = '' } = useParams();
-  const { utilisateur, pret } = useSession();
   const fiche = useCharge(() => mesure(id), [id]);
   const [analyse, setAnalyse] = useState<{ analyse: Analyse; controles: Controles } | null>(null);
-  const [etat, setEtat] = useState<'attente' | 'charge' | 'connexion' | 'erreur' | 'ok'>('attente');
+  const [etat, setEtat] = useState<'attente' | 'charge' | 'erreur' | 'ok'>('attente');
   const [erreur, setErreur] = useState('');
   const [niveau, setNiveau] = useState<'simple' | 'detaillee'>('simple');
 
   useEffect(() => {
-    if (!pret) return;
     let actif = true;
     setEtat('charge');
     setAnalyse(null);
@@ -63,11 +60,10 @@ export default function MesurePage() {
       .then((r) => { if (actif) { setAnalyse(r); setEtat('ok'); } })
       .catch((e) => {
         if (!actif) return;
-        if (e instanceof ErreurApi && (e.statut === 401 || e.statut === 403)) setEtat('connexion');
-        else { setErreur(e.message); setEtat('erreur'); }
+        setErreur(e.message); setEtat('erreur');
       });
     return () => { actif = false; };
-  }, [id, pret, utilisateur]);
+  }, [id]);
 
   if (fiche.charge) return <Chargement />;
   if (!fiche.data) return fiche.erreur ? <Erreur message={fiche.erreur} /> : <Introuvable />;
@@ -113,18 +109,6 @@ export default function MesurePage() {
         <div className="min-w-0 space-y-5">
           {etat === 'charge' && <Carte className="p-6"><Chargement texte="Analyse de la mesure en cours… (jusqu'à 30 secondes la première fois)" /></Carte>}
           {etat === 'erreur' && <Erreur message={erreur} />}
-          {etat === 'connexion' && (
-            <Carte className="p-6 sm:p-8">
-              <p className="font-semibold text-2xl">Cette mesure n'a pas encore été analysée.</p>
-              <p className="mt-2 text-ink-2">
-                Connectez-vous avec votre compte Challenger pour lancer l'analyse (1 crédit). Elle sera ensuite
-                accessible à tous, gratuitement, et identique pour chaque lecteur.
-              </p>
-              <Link to={`/connexion?retour=/mesures/${id}`} className="pilule mt-5 inline-flex items-center gap-2 px-5 py-2.5 font-medium">
-                <LogIn size={16} aria-hidden /> Se connecter
-              </Link>
-            </Carte>
-          )}
 
           {a && analyse && (
             <>
@@ -242,7 +226,6 @@ function Section({ n, id, titre, children }: { n: number; id: string; titre: str
 
 /* ─── Phase 2 : faisabilité juridique sourcée ─────────────────────────────── */
 function FaisabiliteSourcee({ mesureId }: { mesureId: string }) {
-  const { utilisateur, actif } = useSession();
   const [etat, setEtat] = useState<'repos' | 'charge' | 'ok' | 'erreur'>('repos');
   const [f, setF] = useState<Faisabilite | null>(null);
   const [erreur, setErreur] = useState('');
@@ -261,13 +244,9 @@ function FaisabiliteSourcee({ mesureId }: { mesureId: string }) {
           <p className="text-sm text-ink-2">Procédure à suivre et obstacles éventuels, confrontés à la Constitution, au droit européen et à la Convention européenne des droits de l'homme. Chaque obstacle renvoie à un texte officiel.</p>
           {etat === 'erreur' && <p className="mt-2 text-sm text-alert">{erreur}</p>}
         </div>
-        {!actif || utilisateur ? (
-          <button onClick={lancer} disabled={etat === 'charge'} className="pilule px-5 py-2.5 text-sm font-medium shrink-0 disabled:opacity-60">
-            {etat === 'charge' ? <span className="respire">Recherche des textes…</span> : 'Lancer (2 crédits)'}
-          </button>
-        ) : (
-          <Link to="/connexion" className="pilule px-5 py-2.5 text-sm font-medium shrink-0">Se connecter</Link>
-        )}
+        <button onClick={lancer} disabled={etat === 'charge'} className="pilule px-5 py-2.5 text-sm font-medium shrink-0 disabled:opacity-60">
+          {etat === 'charge' ? <span className="respire">Recherche des textes…</span> : 'Lancer l\'analyse'}
+        </button>
       </div>
     );
   }
@@ -411,7 +390,6 @@ function ContexteBudgetaire({ mesureId, theme }: { mesureId: string; theme: stri
 }
 
 function QuestionLocale({ candidatId, candidatNom, intitule }: { candidatId: string; candidatNom: string; intitule: string }) {
-  const { utilisateur, actif } = useSession();
   const [occupe, setOccupe] = useState(false);
   const [resultat, setResultat] = useState<{ q: string; reponse: string; sources: SourceReponse[]; controles: Controles } | null>(null);
   const [erreur, setErreur] = useState('');
@@ -431,9 +409,7 @@ function QuestionLocale({ candidatId, candidatNom, intitule }: { candidatId: str
       <h2 className="text-2xl font-bold">Une question sur cette mesure ?</h2>
       <p className="mt-1 text-sm text-ink-2">La réponse s'appuie uniquement sur le programme de {candidatNom}.</p>
       <div className="mt-4">
-        {!actif || utilisateur
-          ? <BoiteQuestion onEnvoi={envoyer} occupe={occupe} placeholder="Ex. : qui serait concerné en premier ?" />
-          : <Link to="/connexion" className="pilule inline-block px-5 py-2.5 text-sm font-medium">Se connecter pour poser une question</Link>}
+        <BoiteQuestion onEnvoi={envoyer} occupe={occupe} placeholder="Ex. : qui serait concerné en premier ?" />
       </div>
       {occupe && <p className="respire mt-4 text-sm text-ink-2">Recherche dans le programme…</p>}
       {erreur && <div className="mt-4"><Erreur message={erreur} /></div>}

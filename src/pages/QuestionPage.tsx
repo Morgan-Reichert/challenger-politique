@@ -1,46 +1,74 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { History, Plus, Trash2, X } from 'lucide-react';
 import { poserQuestion } from '../lib/api';
-import { useSession } from '../lib/auth';
 import { candidats } from '../lib/corpus';
 import { ordonner } from '../lib/ordre';
 import { useCharge } from '../lib/useCharge';
-import type { Controles, SourceReponse } from '../lib/types';
+import {
+  type Conversation, type Echange, lireConversations, enregistrerConversation,
+  supprimerConversation, effacerHistorique, nouvelId, titreDe,
+} from '../lib/historique';
 import BoiteQuestion from '../components/BoiteQuestion';
 import { Reponse } from '../components/Reponse';
 import { Conteneur, Erreur, Surtitre } from '../components/ui';
 
-interface Echange { q: string; reponse?: string; sources?: SourceReponse[]; controles?: Controles; erreur?: string }
+const vide = (): Conversation => ({ id: nouvelId(), titre: '', majLe: Date.now(), echanges: [] });
 
 export default function QuestionPage() {
   const [params, setParams] = useSearchParams();
-  const { utilisateur, pret, actif } = useSession();
   const liste = useCharge(candidats, []);
   const [cible, setCible] = useState<string>('');
-  const [echanges, setEchanges] = useState<Echange[]>([]);
+  const [conversation, setConversation] = useState<Conversation>(vide);
+  const [historique, setHistorique] = useState<Conversation[]>(lireConversations);
+  const [voirHistorique, setVoirHistorique] = useState(false);
   const [occupe, setOccupe] = useState(false);
   const fin = useRef<HTMLDivElement>(null);
-  const peutPoser = !actif || !!utilisateur;
+  const echanges = conversation.echanges;
+
+  // Sauvegarde locale dès qu'une réponse arrive.
+  useEffect(() => {
+    if (echanges.some((e) => e.reponse || e.erreur)) {
+      enregistrerConversation(conversation);
+      setHistorique(lireConversations());
+    }
+  }, [conversation, echanges]);
+
+  const majDernier = (patch: Partial<Echange>) =>
+    setConversation((c) => ({ ...c, echanges: c.echanges.map((x, i) => (i === c.echanges.length - 1 ? { ...x, ...patch } : x)) }));
 
   const envoyer = async (q: string) => {
     setOccupe(true);
-    setEchanges((e) => [...e, { q }]);
+    setConversation((c) => ({ ...c, titre: c.titre || titreDe(q), echanges: [...c.echanges, { q }] }));
     try {
-      const r = await poserQuestion(q, cible || undefined);
-      setEchanges((e) => e.map((x, i) => (i === e.length - 1 ? { ...x, ...r } : x)));
+      majDernier(await poserQuestion(q, cible || undefined));
     } catch (err) {
-      setEchanges((e) => e.map((x, i) => (i === e.length - 1 ? { ...x, erreur: (err as Error).message } : x)));
+      majDernier({ erreur: (err as Error).message });
     } finally { setOccupe(false); }
   };
 
-  // Question transmise depuis l'accueil.
+  // Question transmise depuis l'accueil (une seule fois, même en StrictMode).
+  const transmise = useRef(false);
   useEffect(() => {
     const q = params.get('q');
-    if (q && pret && peutPoser) { setParams({}, { replace: true }); envoyer(q); }
+    if (q && !transmise.current) { transmise.current = true; setParams({}, { replace: true }); envoyer(q); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pret, peutPoser]);
+  }, []);
 
-  useEffect(() => { fin.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [echanges]);
+  useEffect(() => { fin.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [echanges.length]);
+
+  const ouvrir = (c: Conversation) => { setConversation(c); setVoirHistorique(false); };
+  const supprimer = (id: string) => {
+    supprimerConversation(id);
+    setHistorique(lireConversations());
+    if (conversation.id === id) setConversation(vide());
+  };
+  const toutEffacer = () => {
+    if (!window.confirm('Effacer toutes les conversations enregistrées sur cet appareil ?')) return;
+    effacerHistorique();
+    setHistorique([]);
+    setConversation(vide());
+  };
 
   return (
     <Conteneur etroit>
@@ -49,8 +77,49 @@ export default function QuestionPage() {
         <h1 className="mt-3 text-3xl font-bold tracking-tight">Interrogez les programmes.</h1>
         <p className="mt-3 text-ink-2">
           Les réponses s'appuient uniquement sur le texte des programmes, avec un renvoi vers chaque extrait.
-          Vos questions ne sont pas enregistrées.
+          Vos conversations restent sur cet appareil : elles ne sont jamais envoyées ni conservées par nos serveurs.
         </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button onClick={() => setConversation(vide())} disabled={echanges.length === 0}
+            className="verre rounded-full inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium disabled:opacity-40">
+            <Plus size={15} aria-hidden /> Nouvelle conversation
+          </button>
+          <button onClick={() => setVoirHistorique(!voirHistorique)} aria-expanded={voirHistorique}
+            className="verre rounded-full inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium">
+            <History size={15} aria-hidden /> Historique <span className="text-ink-3 tabular-nums">{historique.length}</span>
+          </button>
+        </div>
+
+        {voirHistorique && (
+          <div className="mt-3 verre rounded-3xl p-2">
+            {historique.length === 0 ? (
+              <p className="px-4 py-3 text-sm text-ink-3">Aucune conversation enregistrée sur cet appareil.</p>
+            ) : (
+              <>
+                <ul className="max-h-72 overflow-y-auto">
+                  {historique.map((c) => (
+                    <li key={c.id} className="flex items-center gap-1">
+                      <button onClick={() => ouvrir(c)}
+                        className={`flex-1 min-w-0 text-left rounded-2xl px-4 py-2.5 hover:bg-surface-solid ${c.id === conversation.id ? 'bg-surface-solid' : ''}`}>
+                        <span className="block text-sm font-medium truncate">{c.titre || 'Sans titre'}</span>
+                        <span className="block text-xs text-ink-3">
+                          {new Date(c.majLe).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} · {c.echanges.length} question{c.echanges.length > 1 ? 's' : ''}
+                        </span>
+                      </button>
+                      <button onClick={() => supprimer(c.id)} aria-label={`Supprimer « ${c.titre} »`}
+                        className="shrink-0 w-9 h-9 grid place-items-center rounded-full text-ink-3 hover:text-ink hover:bg-surface-solid">
+                        <X size={15} aria-hidden />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={toutEffacer} className="mt-1 w-full inline-flex items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm text-alert hover:bg-alert-soft">
+                  <Trash2 size={14} aria-hidden /> Tout effacer de cet appareil
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </header>
 
       <div className="space-y-10 pb-8 min-h-[30vh]">
@@ -67,25 +136,15 @@ export default function QuestionPage() {
 
       <div className="sticky bottom-3 z-10">
         <div className="verre rounded-3xl p-3">
-          {peutPoser ? (
-            <>
-              <div className="mb-2 px-1 flex items-center gap-2 text-sm">
-                <label htmlFor="cible" className="text-ink-3">Programme :</label>
-                <select id="cible" value={cible} onChange={(e) => setCible(e.target.value)}
-                  className="bg-surface-solid border border-line rounded-full px-3 py-1 text-ink">
-                  <option value="">Tous les candidats</option>
-                  {liste.data && ordonner(liste.data).map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                </select>
-              </div>
-              <BoiteQuestion onEnvoi={envoyer} occupe={occupe} />
-            </>
-          ) : (
-            <div className="p-2 text-center">
-              <Link to="/connexion?retour=/question" className="font-medium text-accent hover:underline">
-                Connectez-vous avec votre compte Challenger pour poser une question →
-              </Link>
-            </div>
-          )}
+          <div className="mb-2 px-1 flex items-center gap-2 text-sm">
+            <label htmlFor="cible" className="text-ink-3">Programme :</label>
+            <select id="cible" value={cible} onChange={(e) => setCible(e.target.value)}
+              className="bg-surface-solid border border-line rounded-full px-3 py-1 text-ink">
+              <option value="">Tous les candidats</option>
+              {liste.data && ordonner(liste.data).map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
+            </select>
+          </div>
+          <BoiteQuestion onEnvoi={envoyer} occupe={occupe} />
         </div>
       </div>
     </Conteneur>

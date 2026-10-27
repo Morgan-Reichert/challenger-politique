@@ -1,43 +1,45 @@
 /**
- * Garde commune aux points d'entrée payants : authentification Firebase
- * (comptes Challenger IA) puis quota et crédits (base Supabase de l'application).
+ * Garde commune aux points d'entrée qui appellent le modèle.
  *
- * Retourne `{ ok: true, uid }` ou `{ ok: false, statut, corps }`.
+ * Le service est ouvert, sans compte. Pour qu'il ne puisse pas être utilisé
+ * pour épuiser le budget du modèle, chaque visiteur est limité par adresse IP
+ * (débit par minute + plafond journalier), via la fonction check_chat_quota.
+ *
+ * Confidentialité : l'adresse IP n'est jamais stockée en clair. Seule une
+ * empreinte salée (SHA-256) sert de clé de comptage ; elle ne permet pas de
+ * retrouver l'adresse et n'est rattachée à aucune question posée.
+ *
+ * Retourne `{ ok: true }` ou `{ ok: false, statut, corps }`.
  */
-import { verifyIdToken } from './admin.js';
+import { createHash } from 'node:crypto';
 import { checkAndConsumeQuota } from './quota.js';
-import { estEmailIllimite } from './illimite.js';
 
 const MESSAGES = {
   rate_limited: 'Trop de requêtes. Réessayez dans une minute.',
-  no_credits: 'Quota atteint pour aujourd\'hui. Réessayez demain.',
-  quota_error: 'Vérification du quota impossible.',
+  no_credits: 'Limite quotidienne atteinte. Réessayez demain.',
+  quota_error: 'Service momentanément indisponible.',
 };
 
+function adresse(req) {
+  const transmise = String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim();
+  return transmise || req.headers['x-real-ip'] || req.socket?.remoteAddress || 'inconnue';
+}
+
+function empreinte(ip) {
+  const sel = process.env.POL_SEL_IP || 'challenger-politique';
+  return 'ip:' + createHash('sha256').update(`${sel}:${ip}`).digest('hex').slice(0, 32);
+}
+
 export async function garder(req, cout) {
-  const auth = await verifyIdToken(req);
-
-  // Admin SDK non configuré : toléré en développement local uniquement. Sur
-  // Vercel, l'absence de vérification ouvrirait le modèle à tout le monde.
-  if (auth.skipped) {
-    if (process.env.VERCEL) {
-      return { ok: false, statut: 503, corps: { erreur: 'auth_non_configuree', message: 'Authentification serveur non configurée (FIREBASE_ADMIN_*).' } };
-    }
-    return { ok: true, uid: null, local: true };
+  const quota = await checkAndConsumeQuota(empreinte(adresse(req)), cout);
+  if (quota.skipped) {
+    // Supabase non configuré : toléré en local uniquement.
+    if (process.env.VERCEL) return { ok: false, statut: 503, corps: { erreur: 'quota_non_configure', message: MESSAGES.quota_error } };
+    return { ok: true };
   }
-
-  if (!auth.uid) {
-    return { ok: false, statut: 401, corps: { erreur: 'non_authentifie', message: 'Connectez-vous avec votre compte Challenger.' } };
-  }
-  if (auth.fournisseur === 'anonymous') {
-    return { ok: false, statut: 403, corps: { erreur: 'compte_requis', message: 'Un compte Challenger est nécessaire pour lancer une analyse.' } };
-  }
-  if (estEmailIllimite(auth.email)) return { ok: true, uid: auth.uid };
-
-  const quota = await checkAndConsumeQuota(auth.uid, cout);
   if (!quota.allowed) {
     const statut = quota.reason === 'quota_error' ? 503 : 429;
     return { ok: false, statut, corps: { erreur: quota.reason, message: MESSAGES[quota.reason] ?? MESSAGES.quota_error } };
   }
-  return { ok: true, uid: auth.uid };
+  return { ok: true };
 }

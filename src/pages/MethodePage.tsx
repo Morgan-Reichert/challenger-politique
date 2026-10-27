@@ -11,7 +11,7 @@ const ENGAGEMENTS = [
   ['Aucune consigne de vote', 'Pas de note, pas de classement, pas de « meilleur candidat ». Les demandes de consigne de vote reçoivent une réponse fixe, identique pour tous, sans passer par l\'IA.'],
   ['Ordre tiré au sort', 'L\'ordre des candidats est tiré au sort à chaque visite, dans les listes, les comparaisons et les réponses.'],
   ['Même analyse pour tous', 'Une analyse est générée une fois, puis servie à l\'identique à tous les lecteurs. Elle ne dépend ni de votre profil ni de vos questions.'],
-  ['Vos questions restent privées', 'Une question peut révéler une opinion politique. Aucune n\'est enregistrée ni rattachée à votre compte.'],
+  ['Vos questions restent chez vous', 'Une question peut révéler une opinion politique. Le service fonctionne sans compte, et vos conversations sont conservées uniquement dans votre navigateur : nos serveurs ne les enregistrent pas. Vous pouvez les effacer à tout moment.'],
 ];
 
 export default function MethodePage() {

@@ -1,4 +1,3 @@
-import { auth } from './firebase';
 import type { Analyse, Controles, SourceReponse } from './types';
 
 export class ErreurApi extends Error {
@@ -6,10 +5,9 @@ export class ErreurApi extends Error {
 }
 
 async function appeler<T>(chemin: string, corps: unknown): Promise<T> {
-  const jeton = auth?.currentUser && !auth.currentUser.isAnonymous ? await auth.currentUser.getIdToken() : null;
   const r = await fetch(chemin, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}) },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(corps),
   });
   const data = await r.json().catch(() => ({}));

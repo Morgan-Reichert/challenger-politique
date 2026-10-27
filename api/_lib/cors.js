@@ -1,7 +1,7 @@
 /**
  * CORS pour les appels depuis l'app native Capacitor (origine capacitor://localhost
  * sur iOS, http(s)://localhost sur Android) et le web.
- * Les endpoints sont protégés par le token Firebase → autoriser toute origine est sûr.
+ * Les points d'entrée sont publics et limités par adresse IP (voir garde.js).
  *
  * Usage en tête de handler :  if (cors(req, res)) return;  // gère le préflight OPTIONS
  */

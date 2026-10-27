@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Home, Users, Columns3, ChartNoAxesCombined, MessageCircle, ShieldCheck, LogIn, LogOut,
+  Home, Users, Columns3, ChartNoAxesCombined, MessageCircle, ShieldCheck,
   Search, Menu, X, Moon, Sun, Compass, Plus, Lock,
 } from 'lucide-react';
-import { useSession } from '../lib/auth';
 import { MODE_DEMO, AVERTISSEMENT_DEMO, rechercherMesures } from '../lib/corpus';
 import { nomTheme } from '../lib/themes';
 
@@ -85,7 +84,6 @@ function Logo({ onMenu, ouvert }: { onMenu?: () => void; ouvert?: boolean }) {
 }
 
 function Lateral({ onFermer }: { onFermer?: () => void }) {
-  const { utilisateur, deconnexion, actif } = useSession();
   return (
     <div className="space-y-4">
       <div className="verre rounded-3xl p-2.5 space-y-2.5">
@@ -111,16 +109,6 @@ function Lateral({ onFermer }: { onFermer?: () => void }) {
             <Icone size={19} strokeWidth={1.8} aria-hidden /> {label}
           </NavLink>
         ))}
-        <div className="h-px bg-line mx-3 my-1" />
-        {utilisateur ? (
-          <button onClick={deconnexion} className="w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-[15px] text-ink-2 hover:bg-surface-solid/60 hover:text-ink">
-            <LogOut size={19} strokeWidth={1.8} aria-hidden /> Déconnexion
-          </button>
-        ) : actif ? (
-          <NavLink to="/connexion" className="flex items-center gap-3 rounded-2xl px-4 py-3 text-[15px] text-ink-2 hover:bg-surface-solid/60 hover:text-ink">
-            <LogIn size={19} strokeWidth={1.8} aria-hidden /> Se connecter
-          </NavLink>
-        ) : null}
       </nav>
 
       <div className="space-y-2.5">
@@ -139,8 +127,6 @@ function Lateral({ onFermer }: { onFermer?: () => void }) {
 }
 
 function BarreHaute({ onMenu }: { onMenu: () => void }) {
-  const { utilisateur, actif } = useSession();
-  const naviguer = useNavigate();
   return (
     <div className="flex items-center gap-3">
       <button onClick={onMenu} aria-label="Ouvrir le menu" className="lg:hidden verre rounded-full w-12 h-12 grid place-items-center shrink-0">
@@ -148,21 +134,6 @@ function BarreHaute({ onMenu }: { onMenu: () => void }) {
       </button>
       <Recherche />
       <BasculeTheme />
-      {utilisateur ? (
-        <span className="verre rounded-full h-12 pl-1.5 pr-4 hidden sm:flex items-center gap-2.5 max-w-[240px]">
-          <span className="w-9 h-9 rounded-full bg-pastel-lilas grid place-items-center text-sm font-semibold uppercase" aria-hidden>
-            {(utilisateur.displayName ?? utilisateur.email ?? '?')[0]}
-          </span>
-          <span className="min-w-0 leading-tight">
-            <span className="block text-sm font-semibold truncate">{utilisateur.displayName ?? 'Mon compte'}</span>
-            <span className="block text-[11px] text-ink-3 truncate">{utilisateur.email}</span>
-          </span>
-        </span>
-      ) : actif ? (
-        <button onClick={() => naviguer('/connexion')} className="pilule h-12 px-5 text-sm font-medium hidden sm:inline-flex items-center gap-2 shrink-0">
-          <LogIn size={16} aria-hidden /> Se connecter
-        </button>
-      ) : null}
     </div>
   );
 }

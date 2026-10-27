@@ -4,7 +4,7 @@
  * Renvoie l'analyse d'une mesure selon la grille commune.
  *  - Analyse déjà en cache → servie gratuitement, sans authentification :
  *    tout le monde lit la même analyse.
- *  - Sinon → compte Challenger requis, 1 crédit, génération puis contrôles
+ *  - Sinon → limite par adresse IP (garde.js), génération puis contrôles
  *    déterministes (chiffres, lexique), puis mise en cache.
  */
 import { cors } from './_lib/cors.js';

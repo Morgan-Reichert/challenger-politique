@@ -5,7 +5,7 @@ définitions, implications, non-dits, faisabilité juridique. Même grille pour 
 candidats, aucune consigne de vote.
 
 Application sœur de [Challenger IA](https://github.com/Morgan-Reichert/challenger-ia-chatbot) :
-**même authentification Firebase** (comptes Challenger), base Supabase propre (corpus et quotas), moteur partagé
+service ouvert, **sans compte** (limite par adresse IP), base Supabase propre (corpus et quotas), moteur partagé
 (`api/_lib/recherche.js`, `verifier.js`, `mistral.js`, `quota.js`, `admin.js`).
 
 ## Démarrer
@@ -17,21 +17,20 @@ npm run dev               # http://localhost:3100 — l'API /api/* est servie pa
 ```
 
 Sans Supabase, l'app tourne sur un **jeu de démonstration fictif** (`src/data/demo.json`).
-Sans Firebase Admin, l'API ne vérifie pas les jetons (développement local uniquement).
+Sans Supabase, l'API ne limite pas les appels (développement local uniquement).
 
 ## Mise en production
 
 1. Exécuter `supabase/schema.sql` dans le SQL Editor du projet Supabase (corpus `pol_*` + quotas), ou `npx supabase db push` après `npx supabase link`.
-2. Renseigner les variables de `.env.example` dans Vercel (mêmes valeurs Firebase que Challenger).
-3. Ajouter le domaine dans Firebase › Authentication › Authorized domains.
-4. Ingérer les programmes officiels :
+2. Renseigner les variables de `.env.example` dans Vercel.
+3. Ingérer les programmes officiels :
 
 ```bash
 node --env-file=.env scripts/ingerer-programme.mjs --candidat nom-prenom --nom "Prénom Nom" \
   --formation "Parti" --pdf corpus/programme.pdf --url https://… --essai   # vérifier, puis sans --essai
 ```
 
-5. Lancer le banc de neutralité et publier son rapport : `node --env-file=.env evals/neutralite.mjs`
+4. Lancer le banc de neutralité et publier son rapport : `node --env-file=.env evals/neutralite.mjs`
 
 ## Architecture
 
