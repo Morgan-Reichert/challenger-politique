@@ -17,8 +17,14 @@ const MESSAGES = {
 export async function garder(req, cout) {
   const auth = await verifyIdToken(req);
 
-  // Admin SDK non configuré (développement local) : pas de garde.
-  if (auth.skipped) return { ok: true, uid: null, local: true };
+  // Admin SDK non configuré : toléré en développement local uniquement. Sur
+  // Vercel, l'absence de vérification ouvrirait le modèle à tout le monde.
+  if (auth.skipped) {
+    if (process.env.VERCEL) {
+      return { ok: false, statut: 503, corps: { erreur: 'auth_non_configuree', message: 'Authentification serveur non configurée (FIREBASE_ADMIN_*).' } };
+    }
+    return { ok: true, uid: null, local: true };
+  }
 
   if (!auth.uid) {
     return { ok: false, statut: 401, corps: { erreur: 'non_authentifie', message: 'Connectez-vous avec votre compte Challenger.' } };
