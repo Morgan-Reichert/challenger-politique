@@ -37,7 +37,7 @@ export default function ConnexionPage() {
       <div className="mx-auto max-w-sm py-16">
         <h1 className="text-3xl font-bold tracking-tight">{mode === 'connexion' ? 'Se connecter' : 'Créer un compte'}</h1>
         <p className="mt-2 text-ink-2">
-          Avec votre compte <strong className="font-medium text-ink">Challenger</strong>. Vos crédits sont partagés entre les deux applications.
+          Avec votre compte <strong className="font-medium text-ink">Challenger</strong> : pas besoin de vous réinscrire.
         </p>
 
         <button onClick={() => tenter(viaGoogle)} disabled={occupe}

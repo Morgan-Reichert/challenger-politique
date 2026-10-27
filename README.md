@@ -5,7 +5,7 @@ définitions, implications, non-dits, faisabilité juridique. Même grille pour 
 candidats, aucune consigne de vote.
 
 Application sœur de [Challenger IA](https://github.com/Morgan-Reichert/challenger-ia-chatbot) :
-**même authentification Firebase, mêmes crédits Supabase**, moteur partagé
+**même authentification Firebase** (comptes Challenger), base Supabase propre (corpus et quotas), moteur partagé
 (`api/_lib/recherche.js`, `verifier.js`, `mistral.js`, `quota.js`, `admin.js`).
 
 ## Démarrer
@@ -21,7 +21,7 @@ Sans Firebase Admin, l'API ne vérifie pas les jetons (développement local uniq
 
 ## Mise en production
 
-1. Exécuter `supabase/schema.sql` dans le projet Supabase de Challenger (tables `pol_*`).
+1. Exécuter `supabase/schema.sql` dans le SQL Editor du projet Supabase (corpus `pol_*` + quotas), ou `npx supabase db push` après `npx supabase link`.
 2. Renseigner les variables de `.env.example` dans Vercel (mêmes valeurs Firebase que Challenger).
 3. Ajouter le domaine dans Firebase › Authentication › Authorized domains.
 4. Ingérer les programmes officiels :

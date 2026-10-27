@@ -1,9 +1,9 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Challenger Politique — schéma du corpus
 --
--- À exécuter dans le MÊME projet Supabase que Challenger IA : les crédits
--- (user_credits, check_chat_quota) sont partagés. Toutes les tables de ce
--- produit sont préfixées pol_ pour ne jamais entrer en collision.
+-- Base Supabase propre à Challenger Politique. Le fichier est idempotent :
+-- il peut être exécuté plusieurs fois sans dommage. Les tables du corpus sont
+-- préfixées pol_ ; les tables de quota reprennent le modèle de Challenger IA.
 --
 -- Principe : le corpus est PUBLIC en lecture (transparence), et n'est écrit
 -- que par le serveur (service role) — scripts d'ingestion et API d'analyse.
@@ -12,6 +12,106 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 CREATE EXTENSION IF NOT EXISTS vector;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Quota et crédits — base PROPRE à Challenger Politique
+--
+-- Même modèle que Challenger IA (user_credits, subscriptions, chat_usage,
+-- check_chat_quota), pour que api/_lib/quota.js fonctionne à l'identique.
+-- Ces tables ne sont accessibles qu'au serveur (service role) : RLS activé,
+-- aucune policy, et la fonction n'est pas exposée aux clés publiques.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS user_credits (
+  user_id          text PRIMARY KEY,
+  credits          int  NOT NULL DEFAULT 0,
+  lifetime_credits int  NOT NULL DEFAULT 0,
+  updated_at       timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+  user_id                text PRIMARY KEY,
+  email                  text,
+  stripe_customer_id     text,
+  stripe_subscription_id text,
+  plan                   text NOT NULL DEFAULT 'free',
+  status                 text,
+  current_period_end     timestamptz,
+  updated_at             timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS chat_usage (
+  user_id       text PRIMARY KEY,
+  day           date        NOT NULL DEFAULT current_date,
+  day_count     int         NOT NULL DEFAULT 0,
+  minute_window timestamptz NOT NULL DEFAULT now(),
+  minute_count  int         NOT NULL DEFAULT 0,
+  updated_at    timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE user_credits  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_usage    ENABLE ROW LEVEL SECURITY;
+
+-- Vérifie débit + quota journalier + crédits, et consomme, atomiquement.
+CREATE OR REPLACE FUNCTION check_chat_quota(
+  p_user_id            text,
+  p_cost               int,
+  p_rate_limit_per_min int,
+  p_free_daily_limit   int,
+  p_pro_daily_limit    int
+) RETURNS jsonb LANGUAGE plpgsql AS $$
+DECLARE
+  v_plan         text := 'free';
+  v_credits      int  := 0;
+  v_day_count    int  := 0;
+  v_minute_count int  := 0;
+  v_now          timestamptz := now();
+  v_daily_limit  int;
+BEGIN
+  SELECT plan INTO v_plan FROM subscriptions WHERE user_id = p_user_id;
+  IF v_plan IS NULL THEN v_plan := 'free'; END IF;
+
+  SELECT credits INTO v_credits FROM user_credits WHERE user_id = p_user_id;
+  IF v_credits IS NULL THEN v_credits := 0; END IF;
+
+  INSERT INTO chat_usage (user_id) VALUES (p_user_id) ON CONFLICT (user_id) DO NOTHING;
+
+  UPDATE chat_usage SET day = current_date, day_count = 0, updated_at = v_now
+   WHERE user_id = p_user_id AND day < current_date;
+  UPDATE chat_usage SET minute_window = v_now, minute_count = 0, updated_at = v_now
+   WHERE user_id = p_user_id AND minute_window < v_now - interval '1 minute';
+
+  SELECT minute_count, day_count INTO v_minute_count, v_day_count
+    FROM chat_usage WHERE user_id = p_user_id FOR UPDATE;
+
+  IF v_minute_count >= p_rate_limit_per_min THEN
+    RETURN jsonb_build_object('allowed', false, 'reason', 'rate_limited',
+      'plan', v_plan, 'credits', v_credits, 'day_count', v_day_count);
+  END IF;
+
+  v_daily_limit := CASE WHEN v_plan = 'pro' THEN p_pro_daily_limit ELSE p_free_daily_limit END;
+
+  IF v_day_count >= v_daily_limit THEN
+    IF v_credits < p_cost THEN
+      RETURN jsonb_build_object('allowed', false, 'reason', 'no_credits',
+        'plan', v_plan, 'credits', v_credits, 'day_count', v_day_count);
+    END IF;
+    UPDATE user_credits SET credits = credits - p_cost, updated_at = v_now WHERE user_id = p_user_id;
+    v_credits := v_credits - p_cost;
+  END IF;
+
+  UPDATE chat_usage SET day_count = day_count + 1, minute_count = minute_count + 1, updated_at = v_now
+   WHERE user_id = p_user_id;
+
+  RETURN jsonb_build_object('allowed', true, 'plan', v_plan, 'credits', v_credits, 'day_count', v_day_count + 1);
+END;
+$$;
+
+-- Appelable uniquement par le serveur : sinon n'importe qui pourrait vider le
+-- quota d'un autre utilisateur via l'API publique.
+REVOKE EXECUTE ON FUNCTION check_chat_quota(text, int, int, int, int) FROM PUBLIC, anon, authenticated;
+GRANT  EXECUTE ON FUNCTION check_chat_quota(text, int, int, int, int) TO service_role;
 
 -- ─── Élection ────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS pol_elections (

@@ -1,6 +1,6 @@
 /**
  * Garde commune aux points d'entrée payants : authentification Firebase
- * (comptes Challenger IA) puis quota et crédits partagés (Supabase).
+ * (comptes Challenger IA) puis quota et crédits (base Supabase de l'application).
  *
  * Retourne `{ ok: true, uid }` ou `{ ok: false, statut, corps }`.
  */
@@ -10,7 +10,7 @@ import { estEmailIllimite } from './illimite.js';
 
 const MESSAGES = {
   rate_limited: 'Trop de requêtes. Réessayez dans une minute.',
-  no_credits: 'Quota atteint. Vos crédits Challenger sont épuisés pour aujourd\'hui.',
+  no_credits: 'Quota atteint pour aujourd\'hui. Réessayez demain.',
   quota_error: 'Vérification du quota impossible.',
 };
 
