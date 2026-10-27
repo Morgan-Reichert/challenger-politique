@@ -6,3 +6,4 @@ dist
 corpus/*.pdf
 corpus/*.json
 corpus/*.html
+corpus/*.log
