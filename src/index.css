@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+/*
+ * Style « verre dépoli » : fond lavande lumineux, cartes blanches translucides,
+ * boutons principaux en pilule sombre, accents pastel.
+ * Les couleurs pastel servent l'interface (navigation, modes) — JAMAIS à
+ * identifier un candidat : tous les candidats restent visuellement identiques.
+ */
+:root {
+  --bg: #f3f4fb;
+  --glow-1: #c9cdf6;
+  --glow-2: #f6dcef;
+  --glow-3: #d3ecfb;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-solid: #fbfbfe;
+  --surface-2: rgba(240, 241, 250, 0.9);
+  --ink: #1c1c26;
+  --ink-2: #51526a;
+  --ink-3: #8a8ba3;
+  --line: rgba(120, 125, 180, 0.16);
+  --edge: rgba(255, 255, 255, 0.95);
+  --shadow: 0 10px 34px -12px rgba(70, 76, 150, 0.18), 0 2px 6px -2px rgba(70, 76, 150, 0.06);
+  --pill: #24242c;
+  --pill-ink: #ffffff;
+  --accent: #5b5fcf;
+  --accent-soft: #e8e8fb;
+  --alert: #9a3f16;
+  --alert-soft: #fbe9df;
+  --pastel-bleu: #d9edfb;
+  --pastel-lilas: #e6defb;
+  --pastel-rose: #f6def2;
+  --pastel-vert: #e1f5d8;
+  --pastel-sable: #f8ecd7;
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101118;
+    --glow-1: #2a2c5c;
+    --glow-2: #3a2340;
+    --glow-3: #173048;
+    --surface: rgba(30, 31, 44, 0.66);
+    --surface-solid: #1c1d26;
+    --surface-2: rgba(40, 41, 58, 0.8);
+    --ink: #f1f1f7;
+    --ink-2: #b7b8cc;
+    --ink-3: #80819a;
+    --line: rgba(160, 165, 220, 0.14);
+    --edge: rgba(255, 255, 255, 0.06);
+    --shadow: 0 10px 34px -12px rgba(0, 0, 0, 0.55);
+    --pill: #f1f1f7;
+    --pill-ink: #15161e;
+    --accent: #9da1f5;
+    --accent-soft: #2a2b4a;
+    --alert: #f0a47c;
+    --alert-soft: #3a2419;
+    --pastel-bleu: #1d3346;
+    --pastel-lilas: #2b2648;
+    --pastel-rose: #3a2338;
+    --pastel-vert: #213524;
+    --pastel-sable: #3a2f1c;
+    --serie-1: #3987e5;
+    --serie-2: #d95926;
+    --serie-3: #199e70;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101118;
+  --glow-1: #2a2c5c;
+  --glow-2: #3a2340;
+  --glow-3: #173048;
+  --surface: rgba(30, 31, 44, 0.66);
+  --surface-solid: #1c1d26;
+  --surface-2: rgba(40, 41, 58, 0.8);
+  --ink: #f1f1f7;
+  --ink-2: #b7b8cc;
+  --ink-3: #80819a;
+  --line: rgba(160, 165, 220, 0.14);
+  --edge: rgba(255, 255, 255, 0.06);
+  --shadow: 0 10px 34px -12px rgba(0, 0, 0, 0.55);
+  --pill: #f1f1f7;
+  --pill-ink: #15161e;
+  --accent: #9da1f5;
+  --accent-soft: #2a2b4a;
+  --alert: #f0a47c;
+  --alert-soft: #3a2419;
+  --pastel-bleu: #1d3346;
+  --pastel-lilas: #2b2648;
+  --pastel-rose: #3a2338;
+  --pastel-vert: #213524;
+  --pastel-sable: #3a2f1c;
+  --serie-1: #3987e5;
+  --serie-2: #d95926;
+  --serie-3: #199e70;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-solid: var(--surface-solid);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-pill: var(--pill);
+  --color-pill-ink: var(--pill-ink);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-alert: var(--alert);
+  --color-alert-soft: var(--alert-soft);
+  --color-pastel-bleu: var(--pastel-bleu);
+  --color-pastel-lilas: var(--pastel-lilas);
+  --color-pastel-rose: var(--pastel-rose);
+  --color-pastel-vert: var(--pastel-vert);
+  --color-pastel-sable: var(--pastel-sable);
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, serif;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Halo pastel fixe derrière toute l'application */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 50vh at 8% -5%, var(--glow-1), transparent 70%),
+    radial-gradient(45vw 45vh at 0% 100%, var(--glow-2), transparent 70%),
+    radial-gradient(50vw 50vh at 100% 20%, var(--glow-3), transparent 70%),
+    var(--bg);
+}
+
+::selection { background: var(--accent-soft); color: var(--ink); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
+
+/* ─── Briques visuelles ─────────────────────────────────────────────────── */
+.verre {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+}
+
+.pilule {
+  background: var(--pill);
+  color: var(--pill-ink);
+  border-radius: 9999px;
+  box-shadow: 0 6px 16px -6px rgba(20, 20, 40, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Sphère irisée de l'accueil — pur CSS, sans image */
+.sphere {
+  position: relative;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95), transparent 22%),
+    radial-gradient(circle at 70% 75%, rgba(255, 210, 245, 0.9), transparent 40%),
+    conic-gradient(from 200deg, #9fb7ff, #c8a8ff, #ffc6ea, #a6f0ff, #b9c4ff, #9fb7ff);
+  box-shadow:
+    inset -12px -18px 30px rgba(80, 70, 180, 0.35),
+    inset 10px 12px 24px rgba(255, 255, 255, 0.7),
+    0 30px 60px -20px rgba(110, 100, 220, 0.55);
+  animation: flotte 7s ease-in-out infinite;
+}
+.sphere::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: inherit;
+  background: conic-gradient(from 20deg, transparent, rgba(255, 255, 255, 0.55), transparent 35%, rgba(170, 230, 255, 0.5), transparent 70%);
+  filter: blur(6px);
+  animation: tourne 12s linear infinite;
+}
+@keyframes flotte { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+@keyframes tourne { to { transform: rotate(360deg) } }
+
+/* Citation exacte d'un programme : seul usage de la typographie à empattements */
+.citation-source {
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+  line-height: 1.55;
+  border-left: 3px solid var(--accent);
+  padding-left: 1.1rem;
+}
+
+.prose-pol { line-height: 1.7; color: var(--ink); }
+.prose-pol h3 { font-size: 1.1rem; font-weight: 700; margin: 1.4rem 0 .4rem; }
+.prose-pol p { margin: .6rem 0; }
+.prose-pol ul { list-style: disc; padding-left: 1.2rem; margin: .5rem 0; }
+.prose-pol li { margin: .25rem 0; }
+.prose-pol strong { font-weight: 650; }
+
+@keyframes respire { 0%, 100% { opacity: .45 } 50% { opacity: 1 } }
+.respire { animation: respire 1.6s ease-in-out infinite; }
+
+.sans-barre { scrollbar-width: none; }
+.sans-barre::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .respire, .sphere, .sphere::after { animation: none; }
+  * { scroll-behavior: auto !important; transition: none !important; }
+}

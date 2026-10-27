@@ -1,0 +1,36 @@
+{
+  "name": "challenger-politique",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3100 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit",
+    "ingerer": "node scripts/ingerer-programme.mjs",
+    "eval:neutralite": "node evals/neutralite.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "firebase": "^11.0.0",
+    "firebase-admin": "^12.7.0",
+    "lucide-react": "^0.546.0",
+    "pdfjs-dist": "^5.6.205",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.9.0",
+    "remark-gfm": "^4.0.1",
+    "tailwindcss": "^4.1.14",
+    "vite": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.8.2"
+  }
+}
