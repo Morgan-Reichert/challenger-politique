@@ -75,9 +75,28 @@ for (let i = 0; i < sections.length; i += 2) {
 
 const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
+/**
+ * Intitulé tiré du texte lui-même, sans modèle : la proposition commence par
+ * un verbe à l'infinitif, on garde sa première proposition principale (avant
+ * « pour », « afin de », une virgule…), plafonnée à 9 mots. Ce sont donc les
+ * mots de la source, raccourcis, jamais une reformulation.
+ */
+function intituleDeterministe(t) {
+  let c = t.split(/\s(?:pour|afin d['eu]|afin que|en vue d['eu]|grâce à|notamment|dont|via|y compris)\s|[,:;(–—]|\.\s/i)[0].trim();
+  // Trop court (simple mise en contexte) : on repart du texte complet.
+  if (c.split(/\s+/).length < 4) c = t;
+  let mots = c.replace(/[.\s]+$/, '').split(/\s+/);
+  if (mots.length <= 9) return mots.join(' ');
+  mots = mots.slice(0, 9);
+  // Ne pas finir sur un mot de liaison (« garantir à… »).
+  while (mots.length > 4 && /^(à|a|de|des|du|d'|d’|la|le|les|l'|l’|et|ou|en|un|une|par|sur|aux|au|dans|avec|son|sa|ses|leur|leurs|que|qui|dès|pour|afin|mais|sans|entre|vers|chez)$/i.test(mots.at(-1))) mots.pop();
+  mots[mots.length - 1] = mots.at(-1).replace(/[,;:]+$/, '');
+  return `${mots.join(' ')}…`;
+}
+
 /* Intitulés courts : rédigés par le modèle, par lots, sans toucher au texte. */
 async function intitules(textes) {
-  const repli = textes.map((t) => { const m = t.replace(/[.:;].*$/, '').split(' '); return m.length > 9 ? `${m.slice(0, 9).join(' ')}…` : m.join(' '); });
+  const repli = textes.map(intituleDeterministe);
   if (a['sans-titres']) return repli;
   let r;
   for (let essai = 0; essai < 6; essai++) {
