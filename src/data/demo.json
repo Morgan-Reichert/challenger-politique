@@ -1,30 +1,163 @@
 {
   "avertissement": "Données de démonstration FICTIVES. Aucun de ces candidats ni aucune de ces mesures n'existe. Elles servent uniquement à développer et tester l'interface avant l'ingestion des programmes officiels 2027.",
   "candidats": [
-    { "id": "demo-a", "nom": "Candidat·e A", "formation": "Formation fictive Alpha", "statut": "declare", "site_officiel": null },
-    { "id": "demo-b", "nom": "Candidat·e B", "formation": "Formation fictive Bêta", "statut": "declare", "site_officiel": null },
-    { "id": "demo-c", "nom": "Candidat·e C", "formation": "Formation fictive Gamma", "statut": "declare", "site_officiel": null }
+    {
+      "id": "demo-a",
+      "nom": "Candidat·e A",
+      "formation": "Formation fictive Alpha",
+      "statut": "declare",
+      "site_officiel": null
+    },
+    {
+      "id": "demo-b",
+      "nom": "Candidat·e B",
+      "formation": "Formation fictive Bêta",
+      "statut": "declare",
+      "site_officiel": null
+    },
+    {
+      "id": "demo-c",
+      "nom": "Candidat·e C",
+      "formation": "Formation fictive Gamma",
+      "statut": "declare",
+      "site_officiel": null
+    }
   ],
   "programmes": [
-    { "id": "prog-demo-a", "candidat_id": "demo-a", "titre": "Programme fictif A", "url_officielle": null, "sha256": "demo" },
-    { "id": "prog-demo-b", "candidat_id": "demo-b", "titre": "Programme fictif B", "url_officielle": null, "sha256": "demo" },
-    { "id": "prog-demo-c", "candidat_id": "demo-c", "titre": "Programme fictif C", "url_officielle": null, "sha256": "demo" }
+    {
+      "id": "prog-demo-a",
+      "candidat_id": "demo-a",
+      "titre": "Programme fictif A",
+      "url_officielle": null,
+      "sha256": "demo",
+      "nature": "officiel_2027"
+    },
+    {
+      "id": "prog-demo-b",
+      "candidat_id": "demo-b",
+      "titre": "Programme fictif B",
+      "url_officielle": null,
+      "sha256": "demo",
+      "nature": "officiel_2027"
+    },
+    {
+      "id": "prog-demo-c",
+      "candidat_id": "demo-c",
+      "titre": "Programme fictif C",
+      "url_officielle": null,
+      "sha256": "demo",
+      "nature": "officiel_2027"
+    }
   ],
   "mesures": [
-    { "id": "a1", "candidat_id": "demo-a", "programme_id": "prog-demo-a", "theme_id": "social", "page": 14, "intitule": "Âge légal de départ à la retraite", "texte_source": "Nous ramènerons progressivement l'âge légal de départ à la retraite à 62 ans d'ici la fin du quinquennat, en préservant l'équilibre du système." },
-    { "id": "a2", "candidat_id": "demo-a", "programme_id": "prog-demo-a", "theme_id": "fiscalite", "page": 9, "intitule": "Impôt sur les très hauts patrimoines", "texte_source": "Nous instaurerons une contribution exceptionnelle sur les patrimoines supérieurs à 10 millions d'euros afin de financer la transition écologique." },
-    { "id": "a3", "candidat_id": "demo-a", "programme_id": "prog-demo-a", "theme_id": "sante", "page": 21, "intitule": "Régulation de l'installation des médecins", "texte_source": "Les jeunes médecins devront exercer trois ans dans un territoire sous-doté à l'issue de leur formation." },
-    { "id": "a4", "candidat_id": "demo-a", "programme_id": "prog-demo-a", "theme_id": "institutions", "page": 30, "intitule": "Référendum d'initiative citoyenne", "texte_source": "Nous créerons un véritable référendum d'initiative citoyenne permettant aux Français de proposer et d'abroger des lois." },
-
-    { "id": "b1", "candidat_id": "demo-b", "programme_id": "prog-demo-b", "theme_id": "social", "page": 18, "intitule": "Retraite à points et âge pivot", "texte_source": "Nous mettrons en place un système universel de retraite par points, avec un âge d'équilibre fixé à 65 ans et une liberté de choix pour chacun." },
-    { "id": "b2", "candidat_id": "demo-b", "programme_id": "prog-demo-b", "theme_id": "fiscalite", "page": 7, "intitule": "Baisse des impôts de production", "texte_source": "Nous supprimerons la cotisation sur la valeur ajoutée des entreprises pour redonner de la compétitivité à nos usines." },
-    { "id": "b3", "candidat_id": "demo-b", "programme_id": "prog-demo-b", "theme_id": "securite", "page": 25, "intitule": "Peines planchers", "texte_source": "Nous rétablirons des peines minimales automatiques pour les récidivistes, afin que chaque délit reçoive une réponse ferme." },
-    { "id": "b4", "candidat_id": "demo-b", "programme_id": "prog-demo-b", "theme_id": "europe", "page": 33, "intitule": "Priorité au droit national", "texte_source": "Nous inscrirons dans la Constitution la primauté de la loi française sur les normes européennes dans les domaines régaliens." },
-
-    { "id": "c1", "candidat_id": "demo-c", "programme_id": "prog-demo-c", "theme_id": "social", "page": 11, "intitule": "Retraite selon la durée de cotisation", "texte_source": "Nous supprimerons l'âge légal au profit d'une durée de cotisation unique de 43 ans, avec des départs anticipés pour les métiers pénibles." },
-    { "id": "c2", "candidat_id": "demo-c", "programme_id": "prog-demo-c", "theme_id": "environnement", "page": 16, "intitule": "Sortie des véhicules thermiques", "texte_source": "Nous avancerons à 2032 la fin de la vente des voitures neuves thermiques, accompagnée d'une prime à la conversion renforcée." },
-    { "id": "c3", "candidat_id": "demo-c", "programme_id": "prog-demo-c", "theme_id": "education", "page": 20, "intitule": "Effectifs par classe", "texte_source": "Aucune classe de primaire ne dépassera 20 élèves à la fin du mandat." },
-    { "id": "c4", "candidat_id": "demo-c", "programme_id": "prog-demo-c", "theme_id": "territoires", "page": 27, "intitule": "Encadrement des loyers", "texte_source": "L'encadrement des loyers sera généralisé à toutes les zones tendues du territoire." }
+    {
+      "id": "a1",
+      "candidat_id": "demo-a",
+      "programme_id": "prog-demo-a",
+      "theme_id": "social",
+      "page": 14,
+      "intitule": "Âge légal de départ à la retraite",
+      "texte_source": "Nous ramènerons progressivement l'âge légal de départ à la retraite à 62 ans d'ici la fin du quinquennat, en préservant l'équilibre du système."
+    },
+    {
+      "id": "a2",
+      "candidat_id": "demo-a",
+      "programme_id": "prog-demo-a",
+      "theme_id": "fiscalite",
+      "page": 9,
+      "intitule": "Impôt sur les très hauts patrimoines",
+      "texte_source": "Nous instaurerons une contribution exceptionnelle sur les patrimoines supérieurs à 10 millions d'euros afin de financer la transition écologique."
+    },
+    {
+      "id": "a3",
+      "candidat_id": "demo-a",
+      "programme_id": "prog-demo-a",
+      "theme_id": "sante",
+      "page": 21,
+      "intitule": "Régulation de l'installation des médecins",
+      "texte_source": "Les jeunes médecins devront exercer trois ans dans un territoire sous-doté à l'issue de leur formation."
+    },
+    {
+      "id": "a4",
+      "candidat_id": "demo-a",
+      "programme_id": "prog-demo-a",
+      "theme_id": "institutions",
+      "page": 30,
+      "intitule": "Référendum d'initiative citoyenne",
+      "texte_source": "Nous créerons un véritable référendum d'initiative citoyenne permettant aux Français de proposer et d'abroger des lois."
+    },
+    {
+      "id": "b1",
+      "candidat_id": "demo-b",
+      "programme_id": "prog-demo-b",
+      "theme_id": "social",
+      "page": 18,
+      "intitule": "Retraite à points et âge pivot",
+      "texte_source": "Nous mettrons en place un système universel de retraite par points, avec un âge d'équilibre fixé à 65 ans et une liberté de choix pour chacun."
+    },
+    {
+      "id": "b2",
+      "candidat_id": "demo-b",
+      "programme_id": "prog-demo-b",
+      "theme_id": "fiscalite",
+      "page": 7,
+      "intitule": "Baisse des impôts de production",
+      "texte_source": "Nous supprimerons la cotisation sur la valeur ajoutée des entreprises pour redonner de la compétitivité à nos usines."
+    },
+    {
+      "id": "b3",
+      "candidat_id": "demo-b",
+      "programme_id": "prog-demo-b",
+      "theme_id": "securite",
+      "page": 25,
+      "intitule": "Peines planchers",
+      "texte_source": "Nous rétablirons des peines minimales automatiques pour les récidivistes, afin que chaque délit reçoive une réponse ferme."
+    },
+    {
+      "id": "b4",
+      "candidat_id": "demo-b",
+      "programme_id": "prog-demo-b",
+      "theme_id": "europe",
+      "page": 33,
+      "intitule": "Priorité au droit national",
+      "texte_source": "Nous inscrirons dans la Constitution la primauté de la loi française sur les normes européennes dans les domaines régaliens."
+    },
+    {
+      "id": "c1",
+      "candidat_id": "demo-c",
+      "programme_id": "prog-demo-c",
+      "theme_id": "social",
+      "page": 11,
+      "intitule": "Retraite selon la durée de cotisation",
+      "texte_source": "Nous supprimerons l'âge légal au profit d'une durée de cotisation unique de 43 ans, avec des départs anticipés pour les métiers pénibles."
+    },
+    {
+      "id": "c2",
+      "candidat_id": "demo-c",
+      "programme_id": "prog-demo-c",
+      "theme_id": "environnement",
+      "page": 16,
+      "intitule": "Sortie des véhicules thermiques",
+      "texte_source": "Nous avancerons à 2032 la fin de la vente des voitures neuves thermiques, accompagnée d'une prime à la conversion renforcée."
+    },
+    {
+      "id": "c3",
+      "candidat_id": "demo-c",
+      "programme_id": "prog-demo-c",
+      "theme_id": "education",
+      "page": 20,
+      "intitule": "Effectifs par classe",
+      "texte_source": "Aucune classe de primaire ne dépassera 20 élèves à la fin du mandat."
+    },
+    {
+      "id": "c4",
+      "candidat_id": "demo-c",
+      "programme_id": "prog-demo-c",
+      "theme_id": "territoires",
+      "page": 27,
+      "intitule": "Encadrement des loyers",
+      "texte_source": "L'encadrement des loyers sera généralisé à toutes les zones tendues du territoire."
+    }
   ],
   "analyses": {
     "a1": {
@@ -34,18 +167,52 @@
         "detaillee": "L'âge légal est l'âge minimal à partir duquel un assuré peut liquider sa pension. Il est distinct de la durée de cotisation exigée pour obtenir une pension à taux plein. Abaisser l'âge légal permet de partir plus tôt, mais ne garantit pas une pension complète si la durée de cotisation requise n'est pas atteinte. Le texte annonce une mise en œuvre progressive, sans préciser le rythme."
       },
       "definitions": [
-        { "terme": "Âge légal", "sens_dans_le_texte": "Âge minimal de départ.", "sens_technique": "Âge d'ouverture des droits à pension, fixé par le Code de la sécurité sociale.", "ambiguite": "Ne dit rien de la durée de cotisation, qui détermine le taux plein." },
-        { "terme": "Équilibre du système", "sens_dans_le_texte": "Non défini.", "sens_technique": "Égalité entre recettes et dépenses des régimes de retraite sur une période donnée.", "ambiguite": "Horizon (annuel, 10 ans, 25 ans ?) et périmètre (régime général, tous régimes ?) non précisés." }
+        {
+          "terme": "Âge légal",
+          "sens_dans_le_texte": "Âge minimal de départ.",
+          "sens_technique": "Âge d'ouverture des droits à pension, fixé par le Code de la sécurité sociale.",
+          "ambiguite": "Ne dit rien de la durée de cotisation, qui détermine le taux plein."
+        },
+        {
+          "terme": "Équilibre du système",
+          "sens_dans_le_texte": "Non défini.",
+          "sens_technique": "Égalité entre recettes et dépenses des régimes de retraite sur une période donnée.",
+          "ambiguite": "Horizon (annuel, 10 ans, 25 ans ?) et périmètre (régime général, tous régimes ?) non précisés."
+        }
       ],
       "implications": [
-        { "public": "Actifs nés après 1961", "effet": "Possibilité de liquider leur pension plus tôt qu'avec la règle actuelle.", "niveau": "explicite", "justification": "Découle directement du texte." },
-        { "public": "Assurés à carrière incomplète", "effet": "Partir à 62 ans pourrait se faire avec une décote si la durée de cotisation n'est pas modifiée.", "niveau": "deduit", "justification": "L'âge légal et la durée de cotisation sont deux paramètres distincts ; le texte ne mentionne que le premier." },
-        { "public": "Finances des régimes de retraite", "effet": "Dépenses supplémentaires à financer pour respecter l'« équilibre » annoncé.", "niveau": "deduit", "justification": "Plus de pensionnés sur une période donnée, à recettes inchangées, augmente le besoin de financement." }
+        {
+          "public": "Actifs nés après 1961",
+          "effet": "Possibilité de liquider leur pension plus tôt qu'avec la règle actuelle.",
+          "niveau": "explicite",
+          "justification": "Découle directement du texte."
+        },
+        {
+          "public": "Assurés à carrière incomplète",
+          "effet": "Partir à 62 ans pourrait se faire avec une décote si la durée de cotisation n'est pas modifiée.",
+          "niveau": "deduit",
+          "justification": "L'âge légal et la durée de cotisation sont deux paramètres distincts ; le texte ne mentionne que le premier."
+        },
+        {
+          "public": "Finances des régimes de retraite",
+          "effet": "Dépenses supplémentaires à financer pour respecter l'« équilibre » annoncé.",
+          "niveau": "deduit",
+          "justification": "Plus de pensionnés sur une période donnée, à recettes inchangées, augmente le besoin de financement."
+        }
       ],
       "non_precise": [
-        { "element": "financement", "detail": "Aucune source de financement n'est indiquée alors que l'équilibre du système est annoncé." },
-        { "element": "duree_cotisation", "detail": "La durée de cotisation requise pour le taux plein n'est pas mentionnée." },
-        { "element": "calendrier", "detail": "Le rythme de la baisse (par génération ? par année ?) n'est pas précisé." }
+        {
+          "element": "financement",
+          "detail": "Aucune source de financement n'est indiquée alors que l'équilibre du système est annoncé."
+        },
+        {
+          "element": "duree_cotisation",
+          "detail": "La durée de cotisation requise pour le taux plein n'est pas mentionnée."
+        },
+        {
+          "element": "calendrier",
+          "detail": "Le rythme de la baisse (par génération ? par année ?) n'est pas précisé."
+        }
       ],
       "faisabilite": {
         "vehicule": "loi_ordinaire",
@@ -65,19 +232,58 @@
         "detaillee": "Dans un système par points, la pension dépend du nombre de points acquis et de la valeur du point au moment du départ. L'« âge d'équilibre » n'est pas un âge légal : il sert à appliquer une minoration ou une majoration. Le texte annonce une « liberté de choix », sans préciser l'âge minimal de départ ni les règles de fixation de la valeur du point."
       },
       "definitions": [
-        { "terme": "Système universel", "sens_dans_le_texte": "Un régime unique pour tous.", "sens_technique": "Fusion des régimes de base et complémentaires (il en existe plusieurs dizaines) en un seul.", "ambiguite": "Ne précise pas le sort des régimes spéciaux ni la transition pour les carrières en cours." },
-        { "terme": "Âge d'équilibre", "sens_dans_le_texte": "65 ans.", "sens_technique": "Âge de référence en deçà duquel une décote s'applique et au-delà duquel une surcote s'applique.", "ambiguite": "Le montant de la décote ou de la surcote n'est pas indiqué." },
-        { "terme": "Liberté de choix", "sens_dans_le_texte": "Non défini.", "sens_technique": "Possibilité de choisir son âge de départ au-delà d'un âge minimal.", "ambiguite": "L'âge minimal de départ n'est pas mentionné." }
+        {
+          "terme": "Système universel",
+          "sens_dans_le_texte": "Un régime unique pour tous.",
+          "sens_technique": "Fusion des régimes de base et complémentaires (il en existe plusieurs dizaines) en un seul.",
+          "ambiguite": "Ne précise pas le sort des régimes spéciaux ni la transition pour les carrières en cours."
+        },
+        {
+          "terme": "Âge d'équilibre",
+          "sens_dans_le_texte": "65 ans.",
+          "sens_technique": "Âge de référence en deçà duquel une décote s'applique et au-delà duquel une surcote s'applique.",
+          "ambiguite": "Le montant de la décote ou de la surcote n'est pas indiqué."
+        },
+        {
+          "terme": "Liberté de choix",
+          "sens_dans_le_texte": "Non défini.",
+          "sens_technique": "Possibilité de choisir son âge de départ au-delà d'un âge minimal.",
+          "ambiguite": "L'âge minimal de départ n'est pas mentionné."
+        }
       ],
       "implications": [
-        { "public": "Tous les actifs", "effet": "Le calcul de la pension change de logique : il dépend du nombre de points et de la valeur du point.", "niveau": "explicite", "justification": "Découle directement du texte." },
-        { "public": "Assurés souhaitant partir avant 65 ans", "effet": "Pension minorée s'ils partent avant l'âge d'équilibre.", "niveau": "deduit", "justification": "C'est la fonction même d'un âge d'équilibre." },
-        { "public": "Affiliés aux régimes spéciaux", "effet": "Leur régime serait intégré au système unique, selon des modalités à définir.", "niveau": "deduit", "justification": "« Universel » implique la fusion, mais les modalités ne sont pas décrites." }
+        {
+          "public": "Tous les actifs",
+          "effet": "Le calcul de la pension change de logique : il dépend du nombre de points et de la valeur du point.",
+          "niveau": "explicite",
+          "justification": "Découle directement du texte."
+        },
+        {
+          "public": "Assurés souhaitant partir avant 65 ans",
+          "effet": "Pension minorée s'ils partent avant l'âge d'équilibre.",
+          "niveau": "deduit",
+          "justification": "C'est la fonction même d'un âge d'équilibre."
+        },
+        {
+          "public": "Affiliés aux régimes spéciaux",
+          "effet": "Leur régime serait intégré au système unique, selon des modalités à définir.",
+          "niveau": "deduit",
+          "justification": "« Universel » implique la fusion, mais les modalités ne sont pas décrites."
+        }
       ],
       "non_precise": [
-        { "element": "modalites", "detail": "La règle de fixation et d'évolution de la valeur du point n'est pas précisée." },
-        { "element": "transition", "detail": "La transition pour les carrières en cours n'est pas décrite." },
-        { "element": "age_minimal", "detail": "L'âge minimal de départ n'est pas indiqué." }
+        {
+          "element": "modalites",
+          "detail": "La règle de fixation et d'évolution de la valeur du point n'est pas précisée."
+        },
+        {
+          "element": "transition",
+          "detail": "La transition pour les carrières en cours n'est pas décrite."
+        },
+        {
+          "element": "age_minimal",
+          "detail": "L'âge minimal de départ n'est pas indiqué."
+        }
       ],
       "faisabilite": {
         "vehicule": "loi_ordinaire",
@@ -97,18 +303,52 @@
         "detaillee": "Le texte remplace un critère d'âge par un critère de durée de cotisation. Une personne ayant commencé à travailler à 18 ans pourrait partir à 61 ans ; une personne ayant commencé à 25 ans, à 68 ans. Le texte ne précise pas si un âge de départ sans décote (« âge du taux plein automatique ») serait maintenu pour les carrières incomplètes."
       },
       "definitions": [
-        { "terme": "Durée de cotisation", "sens_dans_le_texte": "43 ans.", "sens_technique": "Nombre de trimestres validés (cotisés ou assimilés : chômage, maladie, maternité…) requis pour le taux plein.", "ambiguite": "Le texte parle de « cotisation » : on ne sait pas si les trimestres assimilés comptent." },
-        { "terme": "Métiers pénibles", "sens_dans_le_texte": "Non défini.", "sens_technique": "En droit actuel, l'exposition est mesurée par des facteurs de risques professionnels (compte professionnel de prévention).", "ambiguite": "Les critères et le nombre d'années de départ anticipé ne sont pas indiqués." }
+        {
+          "terme": "Durée de cotisation",
+          "sens_dans_le_texte": "43 ans.",
+          "sens_technique": "Nombre de trimestres validés (cotisés ou assimilés : chômage, maladie, maternité…) requis pour le taux plein.",
+          "ambiguite": "Le texte parle de « cotisation » : on ne sait pas si les trimestres assimilés comptent."
+        },
+        {
+          "terme": "Métiers pénibles",
+          "sens_dans_le_texte": "Non défini.",
+          "sens_technique": "En droit actuel, l'exposition est mesurée par des facteurs de risques professionnels (compte professionnel de prévention).",
+          "ambiguite": "Les critères et le nombre d'années de départ anticipé ne sont pas indiqués."
+        }
       ],
       "implications": [
-        { "public": "Personnes ayant commencé à travailler tôt", "effet": "Départ possible avant les âges actuels.", "niveau": "explicite", "justification": "Découle de la suppression de l'âge légal." },
-        { "public": "Personnes aux carrières longues d'études ou interrompues", "effet": "Départ à taux plein plus tardif, faute d'âge plancher ou plafond mentionné.", "niveau": "deduit", "justification": "Le seul critère cité est la durée ; le texte ne mentionne pas d'âge d'annulation de la décote." },
-        { "public": "Finances des régimes de retraite", "effet": "Effet incertain : dépend de la répartition des âges d'entrée dans la vie active.", "niveau": "hypothese", "justification": "Le texte ne fournit aucun élément chiffré." }
+        {
+          "public": "Personnes ayant commencé à travailler tôt",
+          "effet": "Départ possible avant les âges actuels.",
+          "niveau": "explicite",
+          "justification": "Découle de la suppression de l'âge légal."
+        },
+        {
+          "public": "Personnes aux carrières longues d'études ou interrompues",
+          "effet": "Départ à taux plein plus tardif, faute d'âge plancher ou plafond mentionné.",
+          "niveau": "deduit",
+          "justification": "Le seul critère cité est la durée ; le texte ne mentionne pas d'âge d'annulation de la décote."
+        },
+        {
+          "public": "Finances des régimes de retraite",
+          "effet": "Effet incertain : dépend de la répartition des âges d'entrée dans la vie active.",
+          "niveau": "hypothese",
+          "justification": "Le texte ne fournit aucun élément chiffré."
+        }
       ],
       "non_precise": [
-        { "element": "trimestres_assimiles", "detail": "On ne sait pas si les périodes de chômage, maladie ou maternité comptent." },
-        { "element": "carrieres_incompletes", "detail": "Aucune règle n'est donnée pour les personnes qui n'atteindront jamais 43 ans de cotisation." },
-        { "element": "financement", "detail": "Aucune indication sur le coût ou le financement." }
+        {
+          "element": "trimestres_assimiles",
+          "detail": "On ne sait pas si les périodes de chômage, maladie ou maternité comptent."
+        },
+        {
+          "element": "carrieres_incompletes",
+          "detail": "Aucune règle n'est donnée pour les personnes qui n'atteindront jamais 43 ans de cotisation."
+        },
+        {
+          "element": "financement",
+          "detail": "Aucune indication sur le coût ou le financement."
+        }
       ],
       "faisabilite": {
         "vehicule": "loi_ordinaire",

@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
-    "ingerer": "node scripts/ingerer-programme.mjs",
+    "extraire": "node --env-file=.env scripts/extraire-programme.mjs",
+    "charger": "node --env-file=.env scripts/charger-corpus.mjs",
     "eval:neutralite": "node evals/neutralite.mjs"
   },
   "dependencies": {

@@ -88,8 +88,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       reponse: r.texte,
-      sources: extraits.map(({ n, id, candidat_id, candidat_nom, intitule, page, texte_source }) =>
-        ({ n, mesure_id: id, candidat_id, candidat_nom, intitule, page, texte_source })),
+      sources: extraits.map(({ n, id, candidat_id, candidat_nom, intitule, page, texte_source, nature, contexte, editeur }) =>
+        ({ n, mesure_id: id, candidat_id, candidat_nom, intitule, page, texte_source, nature, contexte, editeur })),
       controles,
     });
   } catch (e) {

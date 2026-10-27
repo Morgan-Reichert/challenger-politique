@@ -23,7 +23,7 @@ export default function CandidatsPage() {
               <Monogramme nom={c.nom} taille={56} />
               <div className="min-w-0 flex-1">
                 <p className="text-lg font-semibold leading-tight">{c.nom}</p>
-                <p className="text-sm text-ink-2 truncate">{c.formation ?? 'Sans étiquette'}</p>
+                <p className="text-sm text-ink-2 truncate">{c.formation ?? 'Formation non renseignée'}</p>
                 <p className="text-xs text-ink-3 mt-1">{libelleStatut(c.statut)}</p>
               </div>
               <ArrowRight size={18} className="text-ink-3 group-hover:text-ink transition-colors" aria-hidden />

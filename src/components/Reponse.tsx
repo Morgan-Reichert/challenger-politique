@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ShieldAlert } from 'lucide-react';
 import type { Controles, SourceReponse } from '../lib/types';
+import { BadgeSource } from './ui';
 
 const LIBELLES_ATTEINTES: Record<string, string> = {
   chiffre_non_source: 'un chiffre n\'est rattaché à aucune source',
@@ -54,7 +55,10 @@ export function Reponse({ texte, sources, controles }: { texte: string; sources:
 
       {source && (
         <aside className="verre rounded-2xl p-4 space-y-2">
-          <p className="text-xs text-ink-3">Source {source.n} — {source.candidat_nom}{source.page ? `, page ${source.page}` : ''}</p>
+          <p className="flex flex-wrap items-center gap-2 text-xs text-ink-3">
+            Source {source.n} — {source.candidat_nom}{source.page ? `, page ${source.page}` : ''}
+            <BadgeSource programme={source} />
+          </p>
           <blockquote className="citation-source !text-base">« {source.texte_source} »</blockquote>
           <Link to={`/mesures/${source.mesure_id}`} className="inline-block text-sm font-medium text-accent hover:underline">
             Ouvrir l'analyse de cette mesure →

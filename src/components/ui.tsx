@@ -16,7 +16,7 @@ export function Monogramme({ nom, taille = 44 }: { nom: string; taille?: number 
 
 const STATUTS: Record<Candidat['statut'], string> = {
   pressenti: 'Candidature pressentie',
-  declare: 'Candidature déclarée',
+  declare: 'Candidature annoncée (liste officielle en mars 2027)',
   officiel: 'Candidature officielle',
   retire: 'Candidature retirée',
 };
@@ -92,4 +92,51 @@ export function EnTete({ surtitre, titre, children }: { surtitre: string; titre:
       {children && <div className="mt-4 text-ink-2 text-lg leading-relaxed">{children}</div>}
     </header>
   );
+}
+
+/* ─── Nature des sources ─────────────────────────────────────────────────── */
+type ProgrammeSource = { nature?: string; contexte?: string | null; editeur?: string | null };
+
+const SOURCES: Record<string, { label: (p: ProgrammeSource) => string; aide: (p: ProgrammeSource) => string; style: string }> = {
+  officiel_2027: {
+    label: () => 'Programme officiel 2027',
+    aide: () => 'Texte publié par le candidat ou sa campagne pour 2027.',
+    style: 'bg-pastel-vert',
+  },
+  anterieur: {
+    label: (p) => `Document antérieur${p.contexte ? ` · ${p.contexte}` : ''}`,
+    aide: (p) => `Texte publié pour une élection précédente${p.contexte ? ` (${p.contexte})` : ''} : il peut ne plus refléter le projet 2027.`,
+    style: 'bg-pastel-sable',
+  },
+  non_officiel: {
+    label: (p) => `Synthèse non officielle${p.editeur ? ` · ${p.editeur}` : ''}`,
+    aide: (p) => `Document établi par ${p.editeur ?? 'un tiers'}, non publié par le candidat.`,
+    style: 'bg-pastel-rose',
+  },
+  synthese_tierce: {
+    label: (p) => `Résumé · ${p.editeur ?? 'source tierce'}`,
+    aide: (p) => `Formulation de ${p.editeur ?? 'un organisme tiers'}, qui résume la proposition : ce n'est pas le texte du candidat.`,
+    style: 'bg-pastel-lilas',
+  },
+};
+
+export function BadgeSource({ programme, taille = 'petit' }: { programme?: ProgrammeSource | null; taille?: 'petit' | 'normal' }) {
+  const s = SOURCES[programme?.nature ?? 'officiel_2027'] ?? SOURCES.officiel_2027;
+  const p = programme ?? {};
+  return (
+    <span title={s.aide(p)}
+      className={`inline-flex items-center rounded-full ${s.style} text-ink ${taille === 'petit' ? 'px-2 py-0.5 text-[11px]' : 'px-3 py-1 text-xs'} font-medium`}>
+      {s.label(p)}
+    </span>
+  );
+}
+
+/** Légende sous une citation : dit précisément ce que le lecteur a sous les yeux. */
+export function legendeCitation(programme?: ProgrammeSource | null): string {
+  switch (programme?.nature) {
+    case 'synthese_tierce': return `Formulation de ${programme.editeur ?? 'la source'} (résumé, pas le texte du candidat)`;
+    case 'non_officiel': return `Extrait d'une synthèse non officielle${programme.editeur ? ` établie par ${programme.editeur}` : ''}`;
+    case 'anterieur': return `Texte exact d'un document antérieur${programme.contexte ? ` (${programme.contexte})` : ''}`;
+    default: return 'Texte exact du programme';
+  }
 }

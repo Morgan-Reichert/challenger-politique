@@ -37,7 +37,7 @@ export async function candidat(id: string): Promise<{ candidat: Candidat; progra
   const c = verifier(await db.from('pol_candidats').select('id, nom, formation, statut, site_officiel').eq('id', id).maybeSingle());
   if (!c) return null;
   const [programmes, mesures] = await Promise.all([
-    db.from('pol_programmes').select('id, candidat_id, titre, url_officielle, url_archive').eq('candidat_id', id),
+    db.from('pol_programmes').select('id, candidat_id, titre, url_officielle, url_archive, nature, contexte, editeur').eq('candidat_id', id),
     db.from('pol_mesures').select('id, candidat_id, programme_id, theme_id, intitule, texte_source, page').eq('candidat_id', id).order('page'),
   ]);
   return { candidat: c as Candidat, programmes: verifier(programmes), mesures: verifier(mesures) };
@@ -55,17 +55,20 @@ export async function mesure(id: string): Promise<{ mesure: Mesure; candidat: Ca
   }
   const m = verifier(await db.from('pol_mesures')
     .select('id, candidat_id, programme_id, theme_id, intitule, texte_source, page, '
-      + 'candidat:pol_candidats(id, nom, formation, statut), programme:pol_programmes(id, candidat_id, titre, url_officielle, url_archive)')
+      + 'candidat:pol_candidats(id, nom, formation, statut), programme:pol_programmes(id, candidat_id, titre, url_officielle, url_archive, nature, contexte, editeur)')
     .eq('id', id).maybeSingle()) as (Mesure & { candidat: Candidat; programme: Programme | null }) | null;
   if (!m) return null;
   const { candidat: c, programme, ...reste } = m;
   return { mesure: reste, candidat: c, programme };
 }
 
-export async function mesuresDuTheme(themeId: string): Promise<Mesure[]> {
-  if (!db) return demo.mesures.filter((m) => m.theme_id === themeId) as Mesure[];
+export async function mesuresDuTheme(themeId: string): Promise<(Mesure & { programme?: Programme })[]> {
+  if (!db) return demo.mesures.filter((m) => m.theme_id === themeId)
+    .map((m) => ({ ...m, programme: demo.programmes.find((p) => p.id === m.programme_id) })) as (Mesure & { programme?: Programme })[];
   return verifier(await db.from('pol_mesures')
-    .select('id, candidat_id, programme_id, theme_id, intitule, texte_source, page').eq('theme_id', themeId));
+    .select('id, candidat_id, programme_id, theme_id, intitule, texte_source, page, '
+      + 'programme:pol_programmes(id, candidat_id, titre, url_officielle, nature, contexte, editeur)')
+    .eq('theme_id', themeId).order('page')) as unknown as (Mesure & { programme?: Programme })[];
 }
 
 export async function compteParTheme(): Promise<Record<string, number>> {

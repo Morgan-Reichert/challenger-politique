@@ -6,7 +6,7 @@
  * fait régénérer les analyses de TOUS les candidats ensemble, jamais d'un
  * seul. La grille est publique (page Méthode).
  */
-export const VERSION_GRILLE = '2027.1';
+export const VERSION_GRILLE = '2027.2';
 
 export const MODELE_ANALYSE = 'mistral-large-latest';
 
@@ -53,14 +53,28 @@ Tu réponds UNIQUEMENT par un objet JSON valide, à ce format exact :
 Contraintes de volume, identiques pour toutes les mesures : 2 à 4 définitions, 2 à 5 implications, 1 à 5 éléments non précisés, exactement 3 questions.
 La faisabilité est une analyse documentaire, pas un avis juridique : si tu n'es pas certain, « confiance » vaut « faible » ou « speculatif ».`;
 
+/** Décrit l'origine du texte : le modèle ne doit jamais la présenter autrement. */
+export function origineSource(p) {
+  switch (p?.nature) {
+    case 'synthese_tierce': return `résumé de la proposition rédigé par ${p.editeur ?? 'un organisme tiers'} (ce n'est pas le texte du candidat)`;
+    case 'non_officiel': return `synthèse non officielle établie par ${p.editeur ?? 'un tiers'}`;
+    case 'anterieur': return `texte d'un document antérieur à 2027${p.contexte ? ` (${p.contexte})` : ''}`;
+    default: return 'texte exact du programme officiel 2027';
+  }
+}
+
 export function messageAnalyse(mesure) {
   return [
     `CANDIDAT : ${mesure.candidat?.nom ?? mesure.candidat_id}`,
     `THÈME : ${mesure.theme_id}`,
     `INTITULÉ : ${mesure.intitule}`,
-    `TEXTE EXACT DU PROGRAMME${mesure.page ? ` (page ${mesure.page})` : ''} :`,
+    `ORIGINE DU TEXTE : ${origineSource(mesure.programme)}${mesure.page ? ` (page ${mesure.page})` : ''}`,
+    `TEXTE :`,
     `« ${mesure.texte_source} »`,
-  ].join('\n');
+    mesure.programme?.nature && mesure.programme.nature !== 'officiel_2027'
+      ? `Si l'origine du texte limite ce que l'on peut en conclure (résumé par un tiers, document ancien), mentionne-le dans « non_precise ».`
+      : '',
+  ].filter(Boolean).join('\n');
 }
 
 export const SYSTEME_QUESTION = `Tu es l'assistant de Challenger Politique : tu aides les citoyens à comprendre les programmes de l'élection présidentielle française de 2027.
@@ -74,11 +88,12 @@ RÈGLES DE RÉPONSE :
 - Si les extraits ne permettent pas de répondre, dis-le simplement : « Les programmes disponibles ne contiennent pas d'élément sur ce point. » N'utilise pas tes connaissances générales pour combler.
 - Si plusieurs candidats sont concernés, traite-les dans l'ORDRE où les extraits sont fournis, avec la même structure et une longueur comparable. Un candidat sans extrait pertinent est mentionné en une phrase : « Aucune mesure sur ce point dans le programme disponible. »
 - Ne classe jamais les candidats, ne dis jamais qui a raison, ne recommande aucun vote.
+- Chaque extrait indique son ORIGINE. Quand il s'agit d'un résumé par un tiers, d'une synthèse non officielle ou d'un document antérieur à 2027, dis-le dans la phrase (« selon le résumé de l'iFRAP… », « dans son programme de 2022… »). Ne présente jamais un tel extrait comme le programme 2027 du candidat.
 - Si la question est orientée (elle présuppose un jugement, ex. « pourquoi la mesure X est-elle dangereuse ? »), reformule-la d'abord de façon neutre en une phrase (« Vous demandez quels effets aurait la mesure X »), puis réponds à la version neutre.
 - Format : Markdown simple, titres « ### Nom du candidat » si plusieurs candidats, phrases courtes.`;
 
 export function messageQuestion(question, extraits) {
   const blocs = extraits.map((e) =>
-    `[${e.n}] ${e.candidat_nom} — « ${e.intitule} »${e.page ? ` (p. ${e.page})` : ''}\n${e.texte_source}`);
+    `[${e.n}] ${e.candidat_nom} — « ${e.intitule} »${e.page ? ` (p. ${e.page})` : ''} — ORIGINE : ${origineSource(e)}\n${e.texte_source}`);
   return `EXTRAITS DE PROGRAMMES :\n\n${blocs.join('\n\n') || '(aucun extrait pertinent)'}\n\nQUESTION DE L'UTILISATEUR :\n${question}`;
 }

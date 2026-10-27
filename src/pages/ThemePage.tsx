@@ -4,7 +4,7 @@ import { candidats, mesuresDuTheme } from '../lib/corpus';
 import { ordonner } from '../lib/ordre';
 import { THEMES, nomTheme } from '../lib/themes';
 import { useCharge } from '../lib/useCharge';
-import { Conteneur, Chargement, Erreur, Fil, Monogramme, Surtitre } from '../components/ui';
+import { Conteneur, Chargement, Erreur, Fil, Monogramme, Surtitre, BadgeSource } from '../components/ui';
 import Introuvable from './Introuvable';
 
 export default function ThemePage() {
@@ -51,7 +51,10 @@ export default function ThemePage() {
                         <Link to={`/mesures/${m.id}`} className="block p-5 hover:bg-surface-2 transition-colors">
                           <p className="font-medium">{m.intitule}</p>
                           <p className="mt-2 font-serif text-ink-2 leading-relaxed">« {m.texte_source} »</p>
-                          <p className="mt-3 text-xs text-ink-3">{m.page ? `Page ${m.page} · ` : ''}<span className="text-accent">Analyser →</span></p>
+                          <p className="mt-3 flex flex-wrap items-center gap-2 text-xs text-ink-3">
+                            <BadgeSource programme={m.programme} />
+                            {m.page ? `Page ${m.page} · ` : ''}<span className="text-accent">Analyser →</span>
+                          </p>
                         </Link>
                       </li>
                     ))}

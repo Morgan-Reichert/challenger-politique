@@ -6,7 +6,7 @@ import { analyser, analyserFaisabilite, budgetTheme, poserQuestion, type Faisabi
 import { nomTheme } from '../lib/themes';
 import { useCharge } from '../lib/useCharge';
 import type { Analyse, Controles, SourceReponse } from '../lib/types';
-import { Carte, Chargement, Erreur, Fil, Surtitre, BadgeNiveau, LegendeNiveaux } from '../components/ui';
+import { Carte, Chargement, Erreur, Fil, Surtitre, BadgeNiveau, LegendeNiveaux, BadgeSource, legendeCitation } from '../components/ui';
 import { AvertissementControles, Reponse } from '../components/Reponse';
 import BoiteQuestion from '../components/BoiteQuestion';
 import Graphique from '../components/Graphique';
@@ -75,15 +75,18 @@ export default function MesurePage() {
       <div className="pb-4 px-1"><Fil etapes={[{ label: 'Accueil', to: '/' }, { label: c.nom, to: `/candidats/${c.id}` }, { label: nomTheme(m.theme_id) }]} /></div>
 
       <Carte className="p-6 sm:p-10">
-        <Surtitre>{nomTheme(m.theme_id)} · {c.nom}</Surtitre>
+        <div className="flex flex-wrap items-center gap-3">
+          <Surtitre>{nomTheme(m.theme_id)} · {c.nom}</Surtitre>
+          <BadgeSource programme={programme} taille="normal" />
+        </div>
         <h1 className="mt-3 text-3xl sm:text-[42px] font-bold tracking-tight leading-tight max-w-4xl">{m.intitule}</h1>
         <figure className="mt-8 max-w-4xl">
           <blockquote className="citation-source">« {m.texte_source} »</blockquote>
           <figcaption className="mt-3 pl-[1.2rem] text-sm text-ink-3 flex flex-wrap gap-x-3 gap-y-1">
-            <span>Texte exact du programme{m.page ? `, page ${m.page}` : ''}</span>
+            <span>{legendeCitation(programme)}{m.page ? `, page ${m.page}` : ''}</span>
             {programme?.url_officielle && (
               <a href={programme.url_officielle} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
-                Document officiel <ExternalLink size={12} aria-hidden />
+                {programme.nature === 'officiel_2027' ? 'Document officiel' : 'Voir la source'} <ExternalLink size={12} aria-hidden />
               </a>
             )}
             {programme?.url_archive && <a href={programme.url_archive} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Copie archivée</a>}

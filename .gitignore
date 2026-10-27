@@ -4,3 +4,5 @@ dist
 .env.local
 .vercel
 corpus/*.pdf
+corpus/*.json
+corpus/*.html

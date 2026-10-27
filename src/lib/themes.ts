@@ -8,7 +8,7 @@ export const THEMES = [
   { id: 'securite', nom: 'Sécurité & justice' },
   { id: 'immigration', nom: 'Immigration & intégration' },
   { id: 'environnement', nom: 'Environnement & énergie' },
-  { id: 'europe', nom: 'Europe & international' },
+  { id: 'europe', nom: 'Europe, international & défense' },
   { id: 'institutions', nom: 'Institutions & démocratie' },
   { id: 'territoires', nom: 'Territoires, logement & transports' },
   { id: 'culture', nom: 'Culture, médias & numérique' },

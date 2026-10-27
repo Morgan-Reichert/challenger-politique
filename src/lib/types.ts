@@ -12,7 +12,13 @@ export interface Programme {
   titre: string;
   url_officielle: string | null;
   url_archive?: string | null;
+  nature: NatureSource;
+  contexte?: string | null;
+  editeur?: string | null;
 }
+
+/** Origine du document : affichée à côté de chaque mesure. */
+export type NatureSource = 'officiel_2027' | 'anterieur' | 'non_officiel' | 'synthese_tierce';
 
 export interface Mesure {
   id: string;
@@ -50,4 +56,7 @@ export interface SourceReponse {
   intitule: string;
   page: number | null;
   texte_source: string;
+  nature?: NatureSource;
+  contexte?: string | null;
+  editeur?: string | null;
 }

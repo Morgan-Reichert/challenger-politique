@@ -50,7 +50,7 @@ export async function lireMesure(id) {
     .from('pol_mesures')
     .select('id, candidat_id, programme_id, theme_id, intitule, texte_source, page, '
           + 'candidat:pol_candidats(id, nom, formation), '
-          + 'programme:pol_programmes(id, titre, url_officielle, url_archive)')
+          + 'programme:pol_programmes(id, titre, url_officielle, url_archive, nature, contexte, editeur)')
     .eq('id', id)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -127,7 +127,7 @@ export async function rechercherExtraits(question, { candidatId = null, parCandi
     const d = demo();
     return candidats.flatMap((c) => d.mesures
       .filter((m) => m.candidat_id === c.id)
-      .map((m) => ({ ...m, score: scoreLexical(question, m) }))
+      .map((m) => ({ ...m, ...(d.programmes.find((p) => p.id === m.programme_id) ?? {}), id: m.id, score: scoreLexical(question, m) }))
       .filter((m) => m.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, limite));
