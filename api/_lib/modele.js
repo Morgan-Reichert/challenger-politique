@@ -13,7 +13,7 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const reprisePossible = (s) => s === 429 || s >= 500;
 
 export const fournisseur = () => (process.env.GEMINI_API_KEY ? 'gemini' : 'mistral');
-export const modeleGemini = () => process.env.GEMINI_MODELE || 'gemini-2.5-flash';
+export const modeleGemini = () => process.env.GEMINI_MODELE || 'gemini-3.5-flash';
 
 async function unAppelGemini({ cle, systeme, utilisateur, temperature, json }) {
   const modele = modeleGemini();
